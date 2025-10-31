@@ -16,12 +16,11 @@ def create_order(
     date: Optional[datetime] = None
 ) -> Order:
     user = User.objects.get(username=username)
+    order = Order.objects.create(user=user)
 
     if date is not None:
-        order = Order.objects.create(user=user, created_at=date)
-    else:
-        order = Order.objects.create(user=user)
-
+        order.created_at = date
+        order.save(update_fields=["created_at"])
     for ticket in tickets:
         ms = MovieSession.objects.get(pk=ticket["movie_session"])
         Ticket.objects.create(
@@ -33,11 +32,7 @@ def create_order(
 
 
 def get_orders(username: str = None) -> QuerySet[Order]:
-
-    if username is None:
-        return Order.objects.all()
-    else:
-        return (Order.objects.
-                filter(user__username=username).
-                select_related("user").
-                order_by("-created_at"))
+    queryset = Order.objects.select_related("user").order_by("-created_at")
+    if username:
+        queryset = queryset.filter(user__username=username)
+    return queryset

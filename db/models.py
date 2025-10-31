@@ -67,8 +67,7 @@ class Order(models.Model):
     )
 
     def __str__(self) -> str:
-        dt = self.created_at.strftime("%Y-%m-%d %H:%M:%S")
-        return f"<Order: {dt}>"
+        return f"{self.created_at.strftime("%Y-%m-%d %H:%M:%S")}"
 
     class Meta:
         ordering = ["-created_at"]
@@ -86,11 +85,11 @@ class Ticket(models.Model):
 
     def __str__(self) -> str:
         ts = self.movie_session.show_time.strftime("%Y-%m-%d %H:%M:%S")
-        return (f"<Ticket: "
+        return (f""
                 f"{self.movie_session.movie.title} "
                 f"{ts} (row: "
                 f"{self.row}, seat: "
-                f"{self.seat})>")
+                f"{self.seat})")
 
     def clean(self) -> None:
 
